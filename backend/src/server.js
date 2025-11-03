@@ -2,16 +2,29 @@ import express from "express";
 import dotenv from "dotenv";
 import authRouter from "./routes/auth.route.js"
 import messagesRouter from "./routes/message.route.js"
+import path from "path"
 
 dotenv.config();
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 
+const __dirname = path.resolve();
 
+console.log(__dirname);
 const app = express();
 
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/messages', messagesRouter);
+
+//make ready for deployment
+
+if(process.env.NODE_ENV === "production"){
+  app.use(express.static(path.join(__dirname,"../frontend/dist")));
+
+  app.get("*" ,(req,res)=>{
+    res.sendFile(path.join(__dirname,"../frontend/dist/index.html"));
+  })
+}
 
 
 app.listen(PORT,()=> console.log(`listening at port : ${PORT}`));
