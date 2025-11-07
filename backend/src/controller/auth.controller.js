@@ -1,5 +1,6 @@
 
 import { sendEmail } from "../emails/emailHandlers.js";
+import cloudinary from "../lib/cloudinary.js";
 import { generateToken } from "../lib/utils/token.js";
 import { User } from "../models/User.js";
 import bcrypt from "bcryptjs";
@@ -81,4 +82,19 @@ export const signin = async (req,res) => {
 export const logout = async (_,res) =>{
   res.clearCookie("token");
   res.status(200).json({message : "logged out successfully"})
+}
+
+
+export const updateProfile = async (req,res)=>{
+  try {const {profilePic} = req.body;
+  if(!profilePic) return res.status(400).json({message : "profile pic is required"});
+  const uploadResult = await cloudinary.uploader.upload(profilePic);
+  const userId = req.user._id;
+  const updatedUser = await User.findByIdAndUpdate(userId,{profilePic : uploadResult.secure_url},{new : true});
+  res.status(200).json(updatedUser);
+  }
+  catch(err){
+    console.log(err);
+    res.status(500).json({message : "Internal server error"})
+  }
 }
