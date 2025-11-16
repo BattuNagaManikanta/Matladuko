@@ -38,6 +38,12 @@ export const sendMessage = async (req,res) =>{
     const {text,image} = req.body;
     const senderId = req.user._id;
     const {id : recieverId} = req.params;
+    if(!text && !image){
+      return res.status(400).json({message : "Text or image is required"})
+    }
+    if(senderId === recieverId){
+      return res.status(400).json({message : "Reciever not found"})
+    }
     let imageUrl = null;
     if(image){
       const uploadResult = await cloudinary.uploader.upload(profilePic);
