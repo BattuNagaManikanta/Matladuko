@@ -6,7 +6,6 @@ export const arcjetProtection = async (req, res, next) => {
     const decision = await aj.protect(req);
 
     if (decision.isDenied()) {
-      console.log(decision);
       if (decision.reason.isRateLimit()) {
         return res.status(429).json({ message: "Rate limit exceeded. Please try again later." });
       } else if (decision.reason.isBot()) {
