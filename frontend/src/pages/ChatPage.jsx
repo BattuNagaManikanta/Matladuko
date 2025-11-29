@@ -11,8 +11,9 @@ import { useChatStore } from '../store/useChatStore';
 
 function ChatPage() {
 
-  const {isLoggedOut,logout,selectedUser} = useAuthStore();
-  const {activeTab } = useChatStore();
+  const {isLoggedOut,logout} = useAuthStore();
+  const {activeTab , selectedUser} = useChatStore();
+  
   return (
     <div className='relative w-full max-w-6xl h-[650px]'>
       <BorderAnimatedContainer>
@@ -29,6 +30,7 @@ function ChatPage() {
         {/* RIGHT SIDE */}
 
         <div className='flex-1 flex flex-col bg-slate-900/50 backdrop-blur-sm'>
+          
           {selectedUser ? <ChatContainer/> : <NoConversationPlaceHolder/>}
         </div>
       </BorderAnimatedContainer>

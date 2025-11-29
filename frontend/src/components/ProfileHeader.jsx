@@ -2,12 +2,13 @@ import { useEffect,useRef, useState } from "react";
 import { LogOutIcon,VolumeOffIcon,Volume2Icon } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
+import { LoaderIcon } from "react-hot-toast";
 
 const mouseClickSound = new Audio("/sounds/mouse-click.mp3");
 
 function ProfileHeader() {
 
-  const {logout,authUser,updateProfile} = useAuthStore();
+  const {logout,authUser,updateProfile,isImageUploading} = useAuthStore();
   const {isSoundEnabled,toggleSound} = useChatStore();
   const [selectedImg,setSelectedImg] = useState(null)
 
@@ -33,9 +34,14 @@ function ProfileHeader() {
           <div className="avatar online">
             <button className="size-14 rounded-full overflow-hidden relative group" onClick={()=>fileInputRef.current.click()}>
               <img className="size-full object-cover"  src={selectedImg|| (authUser.profilePic === " " ? null : authUser.profilePic) || "/avatar.png"} />
-              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+              {isImageUploading ? 
+              <div className="absolute inset-0 bg-black/50 flex items-center justify-center transition-opacity">
+                <LoaderIcon className='size-3 animate-spin' />
+              </div> 
+              : 
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center">
                 <span className="text-white text-sm">change</span>
-              </div>
+              </div>}
             </button>
             <input type="file" accept="image/*" ref={fileInputRef} onChange={handleImageUpload} className="hidden"/>
           </div>
@@ -49,7 +55,7 @@ function ProfileHeader() {
         </div>
         {/* BUTTONS */}
         <div className="flex gap-4">
-          <button className="text-slate-400 hover:text-slate-200 transition-colors">
+          <button className="text-slate-400 hover:text-slate-200 transition-colors" onClick={()=>logout()}>
             <LogOutIcon className="size-5"/>
           </button>
           {/* sound toggle button */}

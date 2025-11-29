@@ -7,7 +7,6 @@ import bcrypt from "bcryptjs";
 
 export const signup = async (req,res)=>{
   const {fullName,email,password} = req.body;
-  console.log(req.body);
   if(!fullName || !email || !password) {
     return res.status(400).json({message : "Fields are missing"});
   }
@@ -21,12 +20,9 @@ export const signup = async (req,res)=>{
   try{
     
     const userExists = await User.findOne({email});
-    console.log(userExists);
     if(userExists){
       return res.status(400).json({message : "User Already exists try with a different mail or login"});
     }
-    // console.log(bcrypt);
-    // const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
       fullName,
@@ -55,14 +51,12 @@ export const signup = async (req,res)=>{
 
 export const signin = async (req,res) => {
   const {email,password} = req.body;
-  console.log(email,password);
   try{
     const findUser = await User.findOne({email});
     if(!findUser){
       return res.status(400).json({message : " Invalid credentials"});
     }
     const isValid = await bcrypt.compare(password,findUser.password);
-    console.log(isValid);
     if(!isValid){
       return res.status(400).json({message : " Invalid credentials"});
     }

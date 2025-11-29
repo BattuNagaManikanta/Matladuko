@@ -1,3 +1,4 @@
+import cloudinary from "../lib/cloudinary.js";
 import Message from "../models/Messages.js"
 import { User } from "../models/User.js";
 
@@ -46,7 +47,7 @@ export const sendMessage = async (req,res) =>{
     }
     let imageUrl = null;
     if(image){
-      const uploadResult = await cloudinary.uploader.upload(profilePic);
+      const uploadResult = await cloudinary.uploader.upload(image);
       imageUrl = uploadResult.secure_url;
     }
     const newMessage = new Message({
@@ -69,15 +70,10 @@ export const sendMessage = async (req,res) =>{
 export const getChatPartner = async (req,res)=>{
   try{
     const loggedInUserId = req.user._id;
-    console.log("Hello");
-    
     const messages = await Message.find({
       $or : [{senderId : loggedInUserId},{recieverId : loggedInUserId}]
     })
-    console.log(typeof messages[0].senderId);
-
     const chatPartnerIds =   [...new Set(messages.map( msg => (msg.senderId.toString() === loggedInUserId.toString()) ? msg.recieverId.toString() : msg.senderId.toString()))];  
-
     const chatPartners = await User.find({_id : {
       $in : chatPartnerIds
     }}).select("-password")

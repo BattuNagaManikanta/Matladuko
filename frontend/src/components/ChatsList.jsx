@@ -14,7 +14,9 @@ function ChatsList() {
   return (
     <div className='flex flex-col gap-2'>
       {chats.map((chat)=>(
-        <div key={chat._id} onClick={()=>setSelectedUser(chat)} className='bg-cyan-500/10 p-4 rounded-lg cursor-pointer hover:b-cyan-500/20 transition-colors'>
+        <div key={chat._id} onClick={()=>{
+          setSelectedUser(chat);
+        }} className='bg-cyan-500/10 p-4 rounded-lg cursor-pointer hover:bg-cyan-500/20 transition-colors'>
           <div className='flex items-center gap-3'>
             <div className='avatar online'>
               <div className='size-12 rounded-full'>
