@@ -89,7 +89,7 @@ cd ../frontend && npm install
 
 3️⃣ Set Environment Variables
 
-##Create .env files:
+## Create .env files:
 
 - MONGO_URI=your_mongodb_url
 - JWT_SECRET=your_jwt_secret
