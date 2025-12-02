@@ -89,16 +89,16 @@ cd ../frontend && npm install
 
 3️⃣ Set Environment Variables
 
-Create .env files:
+##Create .env files:
 
--MONGO_URI=your_mongodb_url
--JWT_SECRET=your_jwt_secret
--CLOUDINARY_CLOUD_NAME=
--CLOUDINARY_API_KEY=
--CLOUDINARY_API_SECRET=
--RESEND_API_KEY=
--ARCJET_KEY=
--CLIENT_URL=http://localhost:5173
+- MONGO_URI=your_mongodb_url
+- JWT_SECRET=your_jwt_secret
+- CLOUDINARY_CLOUD_NAME=
+- CLOUDINARY_API_KEY=
+- CLOUDINARY_API_SECRET=
+- RESEND_API_KEY=
+- ARCJET_KEY=
+- CLIENT_URL=http://localhost:5173
 
 4️⃣ Start the App
 
