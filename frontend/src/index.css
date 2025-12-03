@@ -34,3 +34,19 @@
   @apply px-4 py-2 inline-block bg-cyan-500/10 rounded-lg text-cyan-400
   hover:text-cyan-500 text-sm transition-colors;
 }
+
+
+.dot-flashing {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #a3a3a3;
+  animation: dotFlashing 1s infinite linear alternate;
+}
+
+@keyframes dot-flashing {
+  0% { background-color: #a3a3a3; }
+  50% { background-color: #cfcfcf; }
+  100% { background-color: #a3a3a3; }
+}

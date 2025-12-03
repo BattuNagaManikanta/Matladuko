@@ -7,11 +7,14 @@ import MessageInput from './MessageInput';
 import MessagesLoadingSkeleton from './MessagesLoadingSkeleton';
 
 function ChatContainer() {
-  const{ selectedUser, getMessagesByUserId , messages,isMessagesLoading } = useChatStore();
+  const{ selectedUser, getMessagesByUserId , messages,isMessagesLoading , subscribeToMessages, unSubscribeFromMessages,typingUser} = useChatStore();
   const {authUser} = useAuthStore();
 
   const chatLastMessageRef = useRef(null);
 
+  // console.log(typingUser);
+  console.log(authUser);
+  
 
   function getIstTime(utc){
     return new Date(utc).toLocaleTimeString("en-IN", {
@@ -23,7 +26,12 @@ function ChatContainer() {
   
   useEffect(()=>{
     getMessagesByUserId(selectedUser._id);
-  },[selectedUser,getMessagesByUserId]);
+    subscribeToMessages();
+
+    return ()=>{
+      unSubscribeFromMessages();
+    }
+  },[selectedUser,getMessagesByUserId,subscribeToMessages,unSubscribeFromMessages]);
 
   useEffect(()=>{
     if(chatLastMessageRef.current){
@@ -38,6 +46,7 @@ function ChatContainer() {
           {messages.length > 0 && !isMessagesLoading ? (
           <div className='max-w-3xl mx-auto space-y-6'>
             {messages.map(msg =>{
+              console.log(msg.senderId,authUser._id);
               return (<div key={msg._id} className={`chat ${(msg.senderId === authUser._id) ? "chat-end" : "chart-start"}
               }`}>
                 <div className={`chat-bubble relative ${msg.senderId === authUser._id ? "bg-cyan-600 text-white" : "bg-cyan-800 text-white"}`}>
@@ -48,6 +57,11 @@ function ChatContainer() {
               </div>)
             })}
             <div ref={chatLastMessageRef}></div>
+            {typingUser === selectedUser._id && (
+              <div className="text-sm text-gray-500 flex items-center gap-2 px-3 py-1">
+                <span className="dot-flashing"></span> typing...
+              </div>
+            )}
           </div> )
           : isMessagesLoading ? <MessagesLoadingSkeleton/> : <NoChatHistoryPlaceHolder name={selectedUser.fullName}/>}
         </div>
