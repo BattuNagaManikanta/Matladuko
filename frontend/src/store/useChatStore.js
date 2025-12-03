@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { useAuthStore } from "./useAuthStore.js";
 
 
+
 export const useChatStore = create((set,get)=>({
   allContacts : [],
   chats : [],
@@ -12,6 +13,7 @@ export const useChatStore = create((set,get)=>({
   selectedUser : null,
   isUsersLoading : false,
   isMessagesLoading : false,
+  typingUser : null,
   isSoundEnabled : JSON.parse(localStorage.getItem("isSoundEnabled")) === true,
   toggleSound : ()=>{
     localStorage.setItem("isSoundEnabled",!get().isSoundEnabled);
@@ -81,5 +83,36 @@ export const useChatStore = create((set,get)=>({
       set({messages : messages})
       toast.error(error.response?.data?.message || "Something Went wrong");
     }
+  },
+  subscribeToMessages : ()=>{
+    const {selectedUser} = get();
+    if(!selectedUser) return;
+    const socket = useAuthStore.getState().socket;
+    
+    socket.on("newMessage",(newMessage) =>{
+      const isMessageSentFromSelectedUser = newMessage.senderId === selectedUser._id;
+      if(!isMessageSentFromSelectedUser) return;
+      const { isSoundEnabled} = get();
+      const currentMessages = get().messages;
+      set({messages : [...currentMessages,newMessage]})
+      console.log(get().isSoundEnabled);
+      
+      if(isSoundEnabled){
+        const notificationSound = new Audio('/sounds/notification.mp3')
+        notificationSound.currentTime = 0;
+        notificationSound.play().catch((e)=>{console.log("Audio play failed : ",e);
+        })
+      }
+    })
+    socket.on("typing",({senderId}) =>{
+      set({typingUser : senderId})
+    });
+    socket.on("stop_typing",({senderId}) =>{
+      set({typingUser : null})
+    })
+  },
+  unSubscribeFromMessages : ()=>{
+    const socket = useAuthStore.getState().socket;
+    socket.off("newMessage");
   }
 }))

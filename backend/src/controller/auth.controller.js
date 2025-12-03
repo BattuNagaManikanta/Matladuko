@@ -62,7 +62,7 @@ export const signin = async (req,res) => {
     }
     generateToken(findUser._id,res);
     res.status(200).json({
-      id : findUser._id,
+      _id : findUser._id,
       email : findUser.email,
       fullName : findUser.fullName,
       profilePic : findUser.profilePic

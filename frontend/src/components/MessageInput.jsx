@@ -3,13 +3,18 @@ import useKeyboardSound from '../hooks/useKeyboardSound'
 import { useChatStore } from '../store/useChatStore';
 import { ImageIcon, SendIcon, XIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useAuthStore } from '../store/useAuthStore';
 
+let typingTimeout = null;
 function MessageInput() {
   const {playRandomKeyStrikeSounds} = useKeyboardSound();
   const [text,setText] = useState("");
   const [imagePreview,setImagePreview] = useState("");
   const fileInputRef = useRef(null);
-  const {sendMessage,isSoundEnabled} =  useChatStore();
+  const {sendMessage,isSoundEnabled,selectedUser} =  useChatStore();
+  const [isTyping,setIsTyping] = useState(false);
+  const {socket} = useAuthStore();
+
   
   const handleSendMessage = (e) =>{
     e.preventDefault();
@@ -42,6 +47,18 @@ function MessageInput() {
     setImagePreview(null);
   }
 
+  const handleTyping = ()=>{
+    if(!isTyping){
+      setIsTyping(true);
+      socket.emit("typing",{recieverId : selectedUser._id})
+    }
+    clearTimeout(typingTimeout);
+    typingTimeout = setTimeout(()=>{
+      setIsTyping(false);
+      socket.emit("stop_typing",{recieverId : selectedUser._id});
+    },500);
+  }
+
   return (
     <div className='p-4 border-t border-slate-700/50'>
       {imagePreview &&
@@ -57,6 +74,7 @@ function MessageInput() {
             <input type='text' value={text} placeholder='Type your message here....' className='h-8 bg-slate-700 w-full p-4 border-none text-slate-50' onChange={(e) =>{
              setText(e.target.value);
              isSoundEnabled && playRandomKeyStrikeSounds();
+             handleTyping();
           }}/>
           </div>
           <div className=''>
